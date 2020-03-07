@@ -29,8 +29,8 @@ func zipFiles(output string, files []string) error {
 	zipWriter := zip.NewWriter(newZipFile)
 	defer zipWriter.Close()
 
-	for _, file := range files {
-		if err = AddFileToZip(zipWriter, file); err != nil {
+	for _, filename := range files {
+		if err = AddFileToZip(zipWriter, filename); err != nil {
 			return err
 		}
 	}
@@ -39,13 +39,13 @@ func zipFiles(output string, files []string) error {
 }
 
 func AddFileToZip(zipWriter *zip.Writer, filename string) error {
-	fileToZip, err := os.Open(filename)
+	inputFile, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
-	defer fileToZip.Close()
+	defer inputFile.Close()
 
-	info, err := fileToZip.Stat()
+	info, err := inputFile.Stat()
 	if err != nil {
 		return err
 	}
@@ -66,6 +66,6 @@ func AddFileToZip(zipWriter *zip.Writer, filename string) error {
 		return err
 	}
 
-	_, err = io.Copy(writer, fileToZip)
+	_, err = io.Copy(writer, inputFile)
 	return err
 }
