@@ -14,9 +14,15 @@ func main() {
 	files := []string{"input/file1.txt", "input/file2.txt"}
 	output := "output/myzip.zip"
 
+	if err := zipFiles(output, files); err != nil {
+		log.Fatalf("cannot zip file: %v", err)
+	}
+}
+
+func zipFiles(output string, files []string) error {
 	newZipFile, err := os.Create(output)
 	if err != nil {
-		log.Fatalf("error: %v", err)
+		return err
 	}
 	defer newZipFile.Close()
 
@@ -25,10 +31,11 @@ func main() {
 
 	for _, file := range files {
 		if err = AddFileToZip(zipWriter, file); err != nil {
-			log.Fatalf("error: %v", err)
+			return err
 		}
 	}
 
+	return nil
 }
 
 func AddFileToZip(zipWriter *zip.Writer, filename string) error {
