@@ -1,0 +1,1 @@
+this readme file for adding output directory to project's structure
