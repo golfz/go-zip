@@ -2,7 +2,6 @@ package main
 
 import (
 	"archive/zip"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -33,14 +32,12 @@ func main() {
 }
 
 func AddFileToZip(zipWriter *zip.Writer, filename string) error {
-
 	fileToZip, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer fileToZip.Close()
 
-	// Get the file information
 	info, err := fileToZip.Stat()
 	if err != nil {
 		return err
@@ -51,20 +48,17 @@ func AddFileToZip(zipWriter *zip.Writer, filename string) error {
 		return err
 	}
 
-	// Using FileInfoHeader() above only uses the basename of the file. If we want
-	// to preserve the folder structure we can overwrite this with the full path.
 	header.Name = filepath.Base(filename)
 
-	fmt.Println(filepath.Base(filename))
+	log.Printf("add a file to zip: %s", filepath.Base(filename))
 
-	// Change to deflate to gain better compression
-	// see http://golang.org/pkg/archive/zip/#pkg-constants
 	header.Method = zip.Deflate
 
 	writer, err := zipWriter.CreateHeader(header)
 	if err != nil {
 		return err
 	}
+
 	_, err = io.Copy(writer, fileToZip)
 	return err
 }
